@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consumo da API</title>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .user-card { transition: transform 0.2s; }
+    .user-card:hover { transform: scale(1.02); }
+    .consultas { gap: 2rem; }
+    #userList { list-style: none; padding: 0; }
+    #userList li { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">API Usuários</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Sobre</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Usuários</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <div class="container">
+    <h1 class="text-center mb-4">Lista de Usuários</h1>
+    
+    <div class="consultas d-flex flex-column flex-md-row justify-content-center">
+      <!-- Lista de Usuários -->
+      <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Todos os Usuários</h5>
+            <button id="loadUsers" class="btn btn-success mb-3">Carregar Usuários</button>
+            <ul id="userList" class="d-flex flex-column"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consulta por ID -->
+      <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Buscar Usuário por ID</h5>
+            <div class="input-group mb-3">
+              <input type="number" id="userId" class="form-control" placeholder="Digite o ID">
+              <button id="getUser" class="btn btn-primary">Buscar</button>
+            </div>
+            <div id="userDetail" class="alert alert-light border"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script jQuery -->
+  <script>
+    $(document).ready(function() {
+      // Carregar todos os usuários
+      $("#loadUsers").click(function() {
+        $.get("/users", function(data) {
+          $("#userList").empty();
+          data.forEach(function(user) {
+            $("#userList").append(
+              `<li class="user-card card p-3 shadow-sm">
+                <p><strong>ID:</strong> ${user.id}</p>
+                <p><strong>Nome:</strong> ${user.name}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Idade:</strong> ${user.age ?? "Não informada"}</p>
+              </li>`
+            );
+          });
+        });
+      });
+
+      // Buscar usuário por ID
+      $("#getUser").click(function() {
+        const id = $("#userId").val();
+        if (!id) {
+          alert("Informe um ID válido!");
+          return;
+        }
+
+        $.get(`/users/${id}`, function(user) {
+          $("#userDetail").html(
+            `<p><strong>ID:</strong> ${user.id}</p>
+             <p><strong>Nome:</strong> ${user.name}</p>
+             <p><strong>Email:</strong> ${user.email}</p>
+             <p><strong>Idade:</strong> ${user.age ?? "Não informada"}</p>`
+          ).removeClass("alert-danger").addClass("alert-success");
+        }).fail(function() {
+          $("#userDetail").html("Usuário não encontrado!")
+            .removeClass("alert-success").addClass("alert-danger");
+        });
+      });
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

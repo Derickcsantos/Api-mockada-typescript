@@ -1,0 +1,13 @@
+typescript-express-api/
+├── src/
+│   ├── index.ts        # Arquivo principal (inicializa servidor)
+│   ├── routes/
+│   │   └── userRoutes.ts
+│   ├── controllers/
+│   │   └── userController.ts
+│   ├── models/
+│   │   └── User.ts
+│   └── data/
+│       └── mockUsers.ts
+├── package.json
+├── tsconfig.json
